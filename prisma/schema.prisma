@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings Booking[]
+  profile UserProfile? 
+  @@map("users")
+}
+
+model Flat {
+  id              String      @id @default(uuid())
+  squareFeet      Int
+  totalBedrooms   Int
+  totalRooms      Int
+  utilitiesDescription String
+  location        String
+  description     String
+  rent            Int
+  availability    Boolean @default(true)
+  advanceAmount   Int
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  bookings Booking[]
+  @@map("flats")
+}
+
+model Booking {
+  id String @id @default(uuid())
+  flatId String
+  flat Flat @relation(fields: [flatId], references: [id])
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  status Status @default(PENDING)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  @@map("bookings")
+}
+
+model UserProfile {
+  id String @id @default(uuid())
+  bio String?
+  user User @relation(fields: [id], references: [id])
+  profession String?
+  address String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("user_profiles")
+}
+
+enum Status {
+  PENDING
+  BOOKED
+  REJECTED
+}
+
