@@ -13,17 +13,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Users {
   id String @id @default(uuid())
-  name String
   email String @unique
+  status UserStatus @default(ACTIVE)  
+  needPasswordChange Boolean @default(false)
   password String
+  role UserRole
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  admin Admin?
   bookings Booking[]
   profile UserProfile? 
+  normalUser normalUser?
   @@map("users")
 }
+
+
+model Admin {
+  id String @id @default(uuid())
+  name String
+  username String @unique
+  email String @unique
+  profilePhoto String?
+  contactNumber String?
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user Users @relation(references: [email], fields: [email])
+@@map("admins")
+}
+model normalUser {
+  id String @id @default(uuid())
+  name String
+  username String @unique
+  email String @unique
+  profilePhoto String?
+  contactNumber String?
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user Users @relation(references: [email], fields: [email])
+@@map("user")
+}
+
 
 model Flat {
   id              String      @id @default(uuid())
@@ -47,7 +80,7 @@ model Booking {
   flatId String
   flat Flat @relation(fields: [flatId], references: [id])
   userId String
-  user User @relation(fields: [userId], references: [id])
+  user Users @relation(fields: [userId], references: [id])
   status Status @default(PENDING)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
@@ -57,7 +90,7 @@ model Booking {
 model UserProfile {
   id String @id @default(uuid())
   bio String?
-  user User @relation(fields: [id], references: [id])
+  user Users @relation(fields: [id], references: [id])
   profession String?
   address String?
   createdAt     DateTime    @default(now())
@@ -72,3 +105,14 @@ enum Status {
   REJECTED
 }
 
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  USER
+
+}
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  DELETED
+}

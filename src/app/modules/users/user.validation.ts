@@ -1,14 +1,36 @@
 import { z } from "zod";
 
+const userSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  username: z.string().min(1, "Username is required"),
+  email: z.string().email("Invalid email address"),
+  contactNumber: z.string().optional(),
+  bio: z.string().optional(),
+  profession: z.string().optional(),
+  address: z.string().optional(),
+});
+
 const createUser = z.object({
-  name: z.string({ required_error: "Name is Required" }).min(1).max(255),
-  email: z.string({ required_error: "Email is Required" }),
-  password: z.string({ required_error: "Password is Required" }),
-  bio: z.string().max(255).optional(),
-  profession: z.string().max(255).optional(),
-  address: z.string().max(255).optional(),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+  user: userSchema,
+});
+
+const adminSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  username: z.string().min(1, "Username is required"),
+  email: z.string().email("Invalid email address"),
+  contactNumber: z.string().optional(),
+  bio: z.string().optional(),
+  profession: z.string().optional(),
+  address: z.string().optional(),
+});
+
+const createAdmin = z.object({
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+  admin: adminSchema,
 });
 
 export const userValidationSchemas = {
   createUser,
+  createAdmin,
 };

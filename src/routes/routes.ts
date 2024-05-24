@@ -9,11 +9,11 @@ const router = Router();
 
 const moduleRoutes = [
   {
-    path: "/register",
+    path: "/users",
     route: userRoutes,
   },
   {
-    path: "/login",
+    path: "/auth",
     route: authRoutes,
   },
   {

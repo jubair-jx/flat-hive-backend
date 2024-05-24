@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { Users } from "@prisma/client";
 import httpStatus from "http-status";
 import AppError from "../../../errors/AppError";
 import prisma from "../../../shared/prisma";
@@ -20,13 +20,13 @@ const getAllProfilesFromDB = async () => {
 };
 
 const updateUserProfileIntoDB = async (userData: any, body: any) => {
-  const getSingleUser = (await prisma.user.findUnique({
+  const getSingleUser = (await prisma.users.findUnique({
     where: {
       email: userData.email,
     },
-  })) as User;
+  })) as Users;
 
-  const isExistUser = await prisma.user.findUnique({
+  const isExistUser = await prisma.users.findUnique({
     where: {
       id: getSingleUser.id,
     },
