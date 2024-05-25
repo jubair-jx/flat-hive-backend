@@ -8,26 +8,81 @@ import verifyToken from "../../../helpers/verifyToken";
 import prisma from "../../../shared/prisma";
 import { TLogin } from "./auth.interface";
 const loginIntoDB = async (payload: TLogin) => {
-  const isExistUser = await prisma.users.findUniqueOrThrow({
-    where: {
-      email: payload?.email,
-      status: UserStatus.ACTIVE,
-    },
-  });
+  let isExistUser : any;
+
+  if (payload.email) {
+    // Check if the user exists in the Users table via email
+    isExistUser = await prisma.users.findFirstOrThrow({
+      where: {
+        email: payload.email,
+        status: UserStatus.ACTIVE,
+      },
+    });
+
+    // Fetch related user data from Admin or normalUser table
+    const adminUser = await prisma.admin.findUnique({
+      where: { email: payload.email },
+    });
+
+    const normalUser = await prisma.normalUser.findUnique({
+      where: { email: payload.email },
+    });
+
+    isExistUser = adminUser ? { ...isExistUser, ...adminUser } : isExistUser;
+    isExistUser = normalUser ? { ...isExistUser, ...normalUser } : isExistUser;
+  } else if (payload.username) {
+    // Check if the user exists in the Admin or normalUser table via username
+    let adminUser, normalUser;
+
+    try {
+      adminUser = await prisma.admin.findUniqueOrThrow({
+        where: { username: payload.username },
+        include: { user: true },
+      });
+    } catch (e:any) {
+      if (e.code !== "P2025") throw e;
+    }
+
+    try {
+      normalUser = await prisma.normalUser.findUniqueOrThrow({
+        where: { username: payload.username },
+        include: { user: true },
+      });
+    } catch (e:any) {
+      if (e.code !== "P2025") throw e;
+    }
+
+    if (!adminUser && !normalUser) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "No user found with the provided username."
+      );
+    }
+
+    isExistUser = adminUser ? adminUser.user : isExistUser;
+    isExistUser = normalUser ? normalUser.user : isExistUser;
+  } else {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Email or username is required."
+    );
+  }
 
   const isCorrectPassword = await bcrypt.compare(
-    payload?.password,
+    payload.password,
     isExistUser.password
   );
 
   if (!isCorrectPassword) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Your Password is incorrect,");
+    throw new AppError(httpStatus.BAD_REQUEST, "Your Password is incorrect.");
   }
+
   const accessToken = generateToken(
     { email: isExistUser.email, role: isExistUser.role },
     config.jwt.jwt_secret_key as string,
     config.jwt.jwt_expires_in as string
   );
+
   const refreshToken = generateToken(
     { email: isExistUser.email, role: isExistUser.role },
     config.jwt.refresh_token_key as string,

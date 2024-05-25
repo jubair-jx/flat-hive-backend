@@ -6,12 +6,12 @@ import notFoundRoute from "./app/middlewares/notFound";
 import router from "./routes/routes";
 const app: Application = express();
 //cors for browser support
-app.use(cors());
-
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cookieParser());
 //parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+
 //root routes
 app.get("/", (req: Request, res: Response) => {
   res.send({ message: "Flat Sharing Server is running now" });
