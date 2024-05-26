@@ -1,6 +1,7 @@
-import { Users } from "@prisma/client";
+import { UserRole, UserStatus, Users } from "@prisma/client";
 import httpStatus from "http-status";
 import AppError from "../../../errors/AppError";
+import { TAuthUser } from "../../../interface/common";
 import prisma from "../../../shared/prisma";
 
 const getAllProfilesFromDB = async () => {
@@ -45,7 +46,54 @@ const updateUserProfileIntoDB = async (userData: any, body: any) => {
   return result;
 };
 
+const getMyProfileFromDB = async (user: TAuthUser) => {
+  const userInfo = await prisma.userProfile.findFirstOrThrow({
+    where: {
+      user: {
+        email: user?.email,
+        status: UserStatus.ACTIVE,
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          email: true,
+          needPasswordChange: true,
+          role: true,
+          status: true,
+        },
+      },
+    },
+  });
+  let userData;
+  if (userInfo?.user?.role === UserRole.SUPER_ADMIN) {
+    userData = await prisma.admin.findUnique({
+      where: {
+        email: userInfo?.user?.email,
+      },
+    });
+  } else if (userInfo?.user?.role === UserRole.ADMIN) {
+    userData = await prisma.admin.findUnique({
+      where: {
+        email: userInfo?.user?.email,
+      },
+    });
+  } else if (userInfo?.user?.role === UserRole.USER) {
+    userData = await prisma.normalUser.findUnique({
+      where: {
+        email: userInfo?.user?.email,
+      },
+    });
+  }
+  return {
+    ...userData,
+    ...userInfo,
+  };
+};
+
 export const profileServices = {
   getAllProfilesFromDB,
   updateUserProfileIntoDB,
+  getMyProfileFromDB,
 };
