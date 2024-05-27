@@ -1,3 +1,4 @@
+import { UserRole } from "@prisma/client";
 import { Router } from "express";
 import auth from "../../middlewares/auth";
 import validateRequest from "../../middlewares/validateRequest";
@@ -8,14 +9,14 @@ const flatRoutes = Router();
 
 flatRoutes.post(
   "/",
-  auth(),
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),
   validateRequest(flatValidations.createFlatValidation),
   flatControllers.createFlat
 );
 flatRoutes.get("/", flatControllers.getAllFlats);
 flatRoutes.put(
   "/:flatId",
-  auth(),
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),
   validateRequest(flatValidations.updateFlatValidation),
   flatControllers.updateFlat
 );
