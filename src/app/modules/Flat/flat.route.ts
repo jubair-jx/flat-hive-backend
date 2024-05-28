@@ -8,7 +8,7 @@ import { flatValidations } from "./flat.validation";
 const flatRoutes = Router();
 
 flatRoutes.post(
-  "/",
+  "/create-flat",
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),
   validateRequest(flatValidations.createFlatValidation),
   flatControllers.createFlat

@@ -70,7 +70,7 @@ model Flat {
   availability    Boolean @default(true)
   advanceAmount   Int
   amenities       String
-  flatPhoto       String?
+  flatPhoto       String[] @default([])
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   bookings Booking[]

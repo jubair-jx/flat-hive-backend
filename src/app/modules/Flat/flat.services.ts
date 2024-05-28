@@ -8,7 +8,10 @@ import { flatSearchAbleFields } from "./flat.constant";
 
 const createFlatIntoDB = async (body: Flat) => {
   const result = await prisma.flat.create({
-    data: body,
+    data: {
+      ...body,
+      flatPhoto: body?.flatPhoto || [],
+    },
   });
 
   return result;

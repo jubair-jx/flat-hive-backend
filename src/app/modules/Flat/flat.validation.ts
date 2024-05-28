@@ -2,11 +2,11 @@ import { z } from "zod";
 
 const createFlatValidation = z.object({
   squareFeet: z
-    .number({ required_error: "Squere Feet is required" })
+    .number({ required_error: "Square Feet is required" })
     .int()
     .positive(),
   totalBedrooms: z
-    .number({ required_error: "Squere Feet is required" })
+    .number({ required_error: "Total Bedrooms is required" })
     .int()
     .positive(),
   totalRooms: z
@@ -14,7 +14,7 @@ const createFlatValidation = z.object({
     .int()
     .positive(),
   utilitiesDescription: z
-    .string({ required_error: "Total Rooms is required" })
+    .string({ required_error: "Utilities Description is required" })
     .max(255),
   location: z.string({ required_error: "Location is required" }).max(255),
   description: z.string({ required_error: "Description is required" }).max(255),
@@ -23,46 +23,60 @@ const createFlatValidation = z.object({
     .number({ required_error: "Advance Amount is required" })
     .int()
     .positive(),
+  availability: z.boolean().default(true),
+  amenities: z.string({ required_error: "Amenities is required" }).max(255),
+  flatPhoto: z.array(z.string()).optional(), // Optional array of strings
 });
-
 const updateFlatValidation = z.object({
   squareFeet: z
-    .number({ required_error: "Squere Feet is required" })
+    .number()
     .int()
     .positive()
-    .optional(),
+    .optional()
+    .describe("Square Feet is required"),
   totalBedrooms: z
-    .number({ required_error: "Squere Feet is required" })
+    .number()
     .int()
     .positive()
-    .optional(),
+    .optional()
+    .describe("Total Bedrooms is required"),
   totalRooms: z
-    .number({ required_error: "Total Rooms is required" })
+    .number()
     .int()
     .positive()
-    .optional(),
+    .optional()
+    .describe("Total Rooms is required"),
   utilitiesDescription: z
-    .string({ required_error: "Total Rooms is required" })
+    .string()
     .max(255)
-    .optional(),
+    .optional()
+    .describe("Utilities Description is required"),
   location: z
-    .string({ required_error: "Location is required" })
+    .string()
     .max(255)
-    .optional(),
+    .optional()
+    .describe("Location is required"),
   description: z
-    .string({ required_error: "Description is required" })
+    .string()
     .max(255)
-    .optional(),
+    .optional()
+    .describe("Description is required"),
   rent: z
-    .number({ required_error: "Rent is required" })
+    .number()
     .int()
     .positive()
-    .optional(),
+    .optional()
+    .describe("Rent is required"),
   advanceAmount: z
-    .number({ required_error: "Advance Amount is required" })
+    .number()
     .int()
     .positive()
-    .optional(),
+    .optional()
+    .describe("Advance Amount is required"),
+  flatPhoto: z
+    .array(z.string())
+    .optional()
+    .describe("Flat photos should be an array of strings"),
 });
 
 export const flatValidations = {
