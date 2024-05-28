@@ -12,15 +12,26 @@ const bookingFlatIntoDB = async (body: any, userMail: any) => {
   if (!getSingleUser) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
-  const isExitsFlat = await prisma.flat.findUnique({
+  const isExitsFlat = await prisma.flat.findFirstOrThrow({
     where: {
       id: body.flatId,
+    },
+    include: {
+      bookings: true,
     },
   });
   if (!isExitsFlat) {
     throw new AppError(httpStatus.NOT_FOUND, "Flat not found");
   }
-
+  const currentBooking = isExitsFlat.bookings.find(
+    (booking) => booking.status === "BOOKED" || booking.status === "REJECTED"
+  );
+  if (currentBooking) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Cannot book the flat. Current status is ${currentBooking.status}.`
+    );
+  }
   const result = await prisma.booking.create({
     data: {
       userId: getSingleUser.id,
