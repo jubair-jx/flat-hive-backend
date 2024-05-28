@@ -1,24 +1,26 @@
-import { Status, User } from "@prisma/client";
+import { Status, Users } from "@prisma/client";
 import httpStatus from "http-status";
 import AppError from "../../../errors/AppError";
 import prisma from "../../../shared/prisma";
 
 const bookingFlatIntoDB = async (body: any, userMail: any) => {
-  const getSingleUser = (await prisma.user.findUnique({
+  const getSingleUser = (await prisma.users.findUnique({
     where: {
       email: userMail.email,
     },
-  })) as User;
-
-  const isExistFlat = await prisma.flat.findUniqueOrThrow({
+  })) as Users;
+  if (!getSingleUser) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+  const isExitsFlat = await prisma.flat.findUnique({
     where: {
       id: body.flatId,
     },
   });
-
-  if (!isExistFlat) {
-    throw new AppError(httpStatus.NOT_FOUND, "This flat is not available");
+  if (!isExitsFlat) {
+    throw new AppError(httpStatus.NOT_FOUND, "Flat not found");
   }
+
   const result = await prisma.booking.create({
     data: {
       userId: getSingleUser.id,

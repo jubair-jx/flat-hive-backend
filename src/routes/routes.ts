@@ -21,11 +21,7 @@ const moduleRoutes = [
     route: flatRoutes,
   },
   {
-    path: "/booking-applications",
-    route: bookingRoutes,
-  },
-  {
-    path: "/booking-requests",
+    path: "/bookings",
     route: bookingRoutes,
   },
   {
