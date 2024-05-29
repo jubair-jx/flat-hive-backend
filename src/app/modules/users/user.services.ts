@@ -161,8 +161,18 @@ const getAllUserFromDB = async (params: any, options: TpaginationItems) => {
   };
 };
 
+const getAllNormalUsersFromDB = async () => {
+  const result = await prisma.normalUser.findMany({
+    include: {
+      user: true,
+    },
+  });
+  return result;
+};
+
 export const userServices = {
   createUserIntoDB,
   createAdminIntoDB,
   getAllUserFromDB,
+  getAllNormalUsersFromDB,
 };

@@ -1,4 +1,6 @@
+import { UserRole } from "@prisma/client";
 import { Router } from "express";
+import auth from "../../middlewares/auth";
 import validateRequest from "../../middlewares/validateRequest";
 import { userControllers } from "./user.controller";
 import { userValidationSchemas } from "./user.validation";
@@ -14,6 +16,15 @@ userRoutes.post(
   validateRequest(userValidationSchemas.createAdmin),
   userControllers.createAdmin
 );
-userRoutes.get("/", userControllers.getAllUsers);
+userRoutes.get(
+  "/",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  userControllers.getAllUsers
+);
+userRoutes.get(
+  "/normal-user",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  userControllers.getAllNormalUsers
+);
 
 export default userRoutes;

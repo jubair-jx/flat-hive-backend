@@ -42,9 +42,25 @@ const getAllUsers = catchAsync(async (req, res) => {
     data: result.data,
   });
 });
+const getAllNormalUsers = catchAsync(async (req, res) => {
+  // const filters = pickFilterData(req.query, userFilterAbleField);
+  // const options = pickFilterData(req.query, paginationFilteringfield);
+
+  const result = await userServices.getAllNormalUsersFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Users data has been retrievd successfully",
+    // meta: result.meta,
+    // data: result.data,
+    data: result,
+  });
+});
 
 export const userControllers = {
   createUser,
   createAdmin,
+  getAllNormalUsers,
   getAllUsers,
 };
