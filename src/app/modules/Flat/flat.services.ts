@@ -105,7 +105,22 @@ const updateFlatIntoDB = async (id: string, body: any) => {
 
   return result;
 };
-const getMyFlatPostFromDB = async (user: TAuthUser) => {};
+const getMyFlatPostFromDB = async (user: TAuthUser) => {
+  const result = await prisma.users.findMany({
+    where: {
+      email: user?.email,
+    },
+    select: {
+      flats: true,
+      id: true,
+      email: true,
+      needPasswordChange: true,
+      role: true,
+      status: true,
+    },
+  });
+  return result;
+};
 export const flatServices = {
   createFlatIntoDB,
   getAllFlatFromDB,

@@ -1,6 +1,7 @@
 import { Status, Users } from "@prisma/client";
 import httpStatus from "http-status";
 import AppError from "../../../errors/AppError";
+import { TAuthUser } from "../../../interface/common";
 import prisma from "../../../shared/prisma";
 
 const bookingFlatIntoDB = async (body: any, userMail: any) => {
@@ -83,8 +84,26 @@ const updateFlatBookingStatusIntoDB = async (
   return changeFlatBookingStatus;
 };
 
+const getMyRequestedFlatFromDB = async (user: TAuthUser) => {
+  const result = await prisma.users.findMany({
+    where: {
+      email: user?.email,
+    },
+    select: {
+      bookings: true,
+      id: true,
+      email: true,
+      needPasswordChange: true,
+      role: true,
+      status: true,
+    },
+  });
+  return result;
+};
+
 export const bookingServices = {
   bookingFlatIntoDB,
   getAllBookingFlatFromDB,
   updateFlatBookingStatusIntoDB,
+  getMyRequestedFlatFromDB,
 };

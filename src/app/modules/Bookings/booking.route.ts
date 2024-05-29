@@ -12,8 +12,13 @@ bookingRoutes.post(
 );
 bookingRoutes.get(
   "/booking-application",
-  auth(UserRole.ADMIN, UserRole.USER, UserRole.SUPER_ADMIN),
+  auth(UserRole.ADMIN, UserRole.USER),
   bookingsControlller.getAllFlats
+);
+bookingRoutes.get(
+  "/my-booking-application",
+  auth(UserRole.ADMIN, UserRole.USER),
+  bookingsControlller.getMyRequestedFlat
 );
 bookingRoutes.put(
   "/:bookingId",

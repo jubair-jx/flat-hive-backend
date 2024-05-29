@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import httpStatus from "http-status";
 import config from "../../../config";
 import verifyToken from "../../../helpers/verifyToken";
@@ -42,9 +43,24 @@ const UpdateFlatBookingStatus = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getMyRequestedFlat = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user;
+
+    const result = await bookingServices.getMyRequestedFlatFromDB(user);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your requested flat retrieved successfully",
+      data: result,
+    });
+  }
+);
 
 export const bookingsControlller = {
   bookingFlat,
   getAllFlats,
   UpdateFlatBookingStatus,
+  getMyRequestedFlat,
 };
