@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import httpStatus from "http-status";
 import catchAsync from "../../../shared/catchAsync";
 import pickFilterData from "../../../shared/pick";
@@ -44,8 +45,24 @@ const updateFlat = catchAsync(async (req, res) => {
   });
 });
 
+const getMyCreatedFlat = catchAsync(
+  async (req: Request & { user?: any }, res: Response) => {
+    const user = req.user;
+
+    const result = await flatServices.getMyFlatPostFromDB(user);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your all of flat retrieved successfully",
+      data: result,
+    });
+  }
+);
+
 export const flatControllers = {
   createFlat,
   getAllFlats,
   updateFlat,
+  getMyCreatedFlat,
 };

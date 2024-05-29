@@ -14,6 +14,11 @@ flatRoutes.post(
   flatControllers.createFlat
 );
 flatRoutes.get("/", flatControllers.getAllFlats);
+flatRoutes.get(
+  "/get-my-flat",
+  auth(UserRole.USER, UserRole.ADMIN),
+  flatControllers.getMyCreatedFlat
+);
 flatRoutes.put(
   "/:flatId",
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),

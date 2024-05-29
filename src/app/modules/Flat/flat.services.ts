@@ -2,6 +2,7 @@ import { Flat, Prisma } from "@prisma/client";
 import httpStatus from "http-status";
 import AppError from "../../../errors/AppError";
 import { helperFunction } from "../../../helpers/calculate.pagination";
+import { TAuthUser } from "../../../interface/common";
 import { TpaginationItems } from "../../../interface/pagination.interface";
 import prisma from "../../../shared/prisma";
 import { flatSearchAbleFields } from "./flat.constant";
@@ -104,8 +105,10 @@ const updateFlatIntoDB = async (id: string, body: any) => {
 
   return result;
 };
+const getMyFlatPostFromDB = async (user: TAuthUser) => {};
 export const flatServices = {
   createFlatIntoDB,
   getAllFlatFromDB,
   updateFlatIntoDB,
+  getMyFlatPostFromDB,
 };
