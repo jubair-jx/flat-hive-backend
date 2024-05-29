@@ -32,6 +32,19 @@ const bookingFlatIntoDB = async (body: any, userMail: any) => {
       `Cannot book the flat. Current status is ${currentBooking.status}.`
     );
   }
+
+  const userBooking = await prisma.booking.findFirst({
+    where: {
+      userId: getSingleUser?.id,
+      flatId: body.flatId,
+    },
+  });
+  if (userBooking) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You have already booked this flat."
+    );
+  }
   const result = await prisma.booking.create({
     data: {
       userId: getSingleUser.id,
