@@ -106,7 +106,7 @@ const updateFlatIntoDB = async (id: string, body: any) => {
   return result;
 };
 const getMyFlatPostFromDB = async (user: TAuthUser) => {
-  const result = await prisma.users.findMany({
+  const result = await prisma.users.findUnique({
     where: {
       email: user?.email,
     },

@@ -85,20 +85,31 @@ const updateFlatBookingStatusIntoDB = async (
 };
 
 const getMyRequestedFlatFromDB = async (user: TAuthUser) => {
-  const result = await prisma.users.findMany({
+  const getSingleUser = await prisma.users.findUnique({
     where: {
       email: user?.email,
     },
-    select: {
-      bookings: true,
-      id: true,
-      email: true,
-      needPasswordChange: true,
-      role: true,
-      status: true,
+
+    // select: {
+    //   bookings:true
+    //   id: true,
+    //   email: true,
+    //   needPasswordChange: true,
+    //   role: true,
+    //   status: true,
+    // },
+  });
+  const getMyRequestBooking = await prisma.booking.findMany({
+    where: {
+      userId: getSingleUser?.id,
+    },
+    include: {
+      flat: true,
     },
   });
-  return result;
+  console.log(getMyRequestBooking);
+  return getMyRequestBooking;
+  // return result;
 };
 
 export const bookingServices = {
