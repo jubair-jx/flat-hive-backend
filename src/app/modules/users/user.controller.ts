@@ -58,9 +58,23 @@ const getAllNormalUsers = catchAsync(async (req, res) => {
   });
 });
 
+const updateNormalUserData = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const result = await userServices.updateNormaUserInfoDataById(id, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Normal User data Info has been updated successfully",
+    data: result,
+  });
+});
+
 export const userControllers = {
   createUser,
   createAdmin,
   getAllNormalUsers,
   getAllUsers,
+  updateNormalUserData,
 };

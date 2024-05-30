@@ -3,6 +3,7 @@ import * as bcrypt from "bcrypt";
 import { helperFunction } from "../../../helpers/calculate.pagination";
 import { TpaginationItems } from "../../../interface/pagination.interface";
 import prisma from "../../../shared/prisma";
+import { updateNormalUserInfo } from "../NormalUser/normal.interface";
 import { userSearchAbleFields } from "./user.constant";
 type TInputData = {
   name: string;
@@ -169,10 +170,49 @@ const getAllNormalUsersFromDB = async () => {
   });
   return result;
 };
+const updateNormaUserInfoDataById = async (
+  id: string,
+  data: updateNormalUserInfo
+) => {
+  const isExistData = await prisma.normalUser.findUniqueOrThrow({
+    where: {
+      id,
+      isDeleted: false,
+    },
+  });
 
+  const isUserExist = await prisma.users.findFirstOrThrow({
+    where: {
+      normalUser: {
+        id: isExistData.id,
+      },
+    },
+  });
+
+  const result = await prisma.users.update({
+    where: {
+      id: isUserExist?.id,
+    },
+    data: {
+      status: data?.status,
+      role: data?.role,
+    },
+    select: {
+      id: true,
+      email: true,
+      status: true,
+      needPasswordChange: true,
+      role: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  return result;
+};
 export const userServices = {
   createUserIntoDB,
   createAdminIntoDB,
   getAllUserFromDB,
   getAllNormalUsersFromDB,
+  updateNormaUserInfoDataById,
 };
