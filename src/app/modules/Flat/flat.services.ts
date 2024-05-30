@@ -121,9 +121,34 @@ const getMyFlatPostFromDB = async (user: TAuthUser) => {
   });
   return result;
 };
+const deleteFlatById = async (id: string) => {
+  const isExistFlat = await prisma.flat.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.booking.deleteMany({
+      where: {
+        flat: {
+          id,
+        },
+      },
+    });
+    const deleteFlat = await tx.flat.delete({
+      where: {
+        id,
+      },
+      include: {},
+    });
+    return deleteFlat;
+  });
+  return result;
+};
 export const flatServices = {
   createFlatIntoDB,
   getAllFlatFromDB,
   updateFlatIntoDB,
   getMyFlatPostFromDB,
+  deleteFlatById,
 };

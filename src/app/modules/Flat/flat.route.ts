@@ -25,5 +25,9 @@ flatRoutes.put(
   validateRequest(flatValidations.updateFlatValidation),
   flatControllers.updateFlat
 );
-
+flatRoutes.delete(
+  "/:id",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  flatControllers.deleteFlatFromDB
+);
 export default flatRoutes;

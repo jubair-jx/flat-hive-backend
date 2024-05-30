@@ -59,10 +59,21 @@ const getMyCreatedFlat = catchAsync(
     });
   }
 );
+const deleteFlatFromDB = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await flatServices.deleteFlatById(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Flat deleted successfully",
+    data: result,
+  });
+});
 
 export const flatControllers = {
   createFlat,
   getAllFlats,
   updateFlat,
   getMyCreatedFlat,
+  deleteFlatFromDB,
 };
