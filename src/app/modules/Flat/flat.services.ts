@@ -1,6 +1,4 @@
 import { Flat, Prisma } from "@prisma/client";
-import httpStatus from "http-status";
-import AppError from "../../../errors/AppError";
 import { helperFunction } from "../../../helpers/calculate.pagination";
 import { TAuthUser } from "../../../interface/common";
 import { TpaginationItems } from "../../../interface/pagination.interface";
@@ -85,16 +83,12 @@ const getAllFlatFromDB = async (params: any, options: TpaginationItems) => {
   };
 };
 
-const updateFlatIntoDB = async (id: string, body: any) => {
+const updateFlatIntoDB = async (id: string, body: Flat) => {
   const isExistFlat = await prisma.flat.findUniqueOrThrow({
     where: {
       id,
     },
   });
-
-  if (!isExistFlat) {
-    throw new AppError(httpStatus.NOT_FOUND, "This flat is not available");
-  }
 
   const result = await prisma.flat.update({
     where: {
