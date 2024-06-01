@@ -10,7 +10,11 @@ profileRoutes.get(
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   profileControllers.getAllProfiles
 );
-profileRoutes.put("/", auth(), profileControllers.updateProfile);
+profileRoutes.put(
+  "/update-info",
+  auth(UserRole.ADMIN, UserRole.ADMIN, UserRole.USER),
+  profileControllers.updateUserProfile
+);
 profileRoutes.get(
   "/get-my-profile",
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),

@@ -1,8 +1,9 @@
-import { UserRole, UserStatus, Users } from "@prisma/client";
+import { PrismaClient, UserRole, UserStatus } from "@prisma/client";
 import httpStatus from "http-status";
 import AppError from "../../../errors/AppError";
 import { TAuthUser } from "../../../interface/common";
 import prisma from "../../../shared/prisma";
+const prismaForUpdate = new PrismaClient();
 
 const getAllProfilesFromDB = async () => {
   const result = await prisma.userProfile.findMany({
@@ -20,16 +21,10 @@ const getAllProfilesFromDB = async () => {
   return result;
 };
 
-const updateUserProfileIntoDB = async (userData: any, body: any) => {
-  const getSingleUser = (await prisma.users.findUnique({
-    where: {
-      email: userData.email,
-    },
-  })) as Users;
-
+const updateUserProfileIntoDB = async (userData: TAuthUser, body: any) => {
   const isExistUser = await prisma.users.findUnique({
     where: {
-      id: getSingleUser.id,
+      email: userData.email,
     },
   });
 
@@ -37,12 +32,109 @@ const updateUserProfileIntoDB = async (userData: any, body: any) => {
     throw new AppError(httpStatus.NOT_FOUND, "This user is not available");
   }
 
-  const result = await prisma.userProfile.update({
-    where: {
-      id: getSingleUser.id,
-    },
-    data: body,
+  if (body.email && body.email !== isExistUser.email) {
+    const emailExists = await prisma.users.findUnique({
+      where: {
+        email: body.email,
+      },
+    });
+
+    if (emailExists) {
+      throw new AppError(httpStatus.CONFLICT, "Email is already in use");
+    }
+  }
+
+  if (body.username) {
+    const usernameExistsInAdmin = await prisma.admin.findUnique({
+      where: {
+        username: body.username,
+      },
+    });
+
+    const usernameExistsInNormalUser = await prisma.normalUser.findUnique({
+      where: {
+        username: body.username,
+      },
+    });
+
+    if (
+      (usernameExistsInAdmin &&
+        usernameExistsInAdmin.email !== isExistUser.email) ||
+      (usernameExistsInNormalUser &&
+        usernameExistsInNormalUser.email !== isExistUser.email)
+    ) {
+      throw new AppError(httpStatus.CONFLICT, "Username is already in use");
+    }
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    let updatedProfile;
+
+    if (isExistUser.role === "ADMIN") {
+      // First, update the admin table
+      updatedProfile = await tx.admin.update({
+        where: { email: isExistUser.email },
+        data: {
+          username: body.username,
+          email: body.email || isExistUser.email,
+          profilePhoto: body.profilePhoto,
+          contactNumber: body.contactNumber,
+        },
+      });
+
+      // Then, update the users table and user profile
+      await tx.users.update({
+        where: { id: isExistUser.id },
+        data: { email: body.email || isExistUser.email },
+      });
+
+      if (body.bio || body.profession || body.address) {
+        await tx.userProfile.update({
+          where: { id: isExistUser.id },
+          data: {
+            bio: body.bio,
+            profession: body.profession,
+            address: body.address,
+          },
+        });
+      }
+    } else if (isExistUser.role === "USER") {
+      // First, update the normalUser table
+      updatedProfile = await tx.normalUser.update({
+        where: { email: isExistUser.email },
+        data: {
+          username: body.username,
+          email: body.email || isExistUser.email,
+          profilePhoto: body.profilePhoto,
+          contactNumber: body.contactNumber,
+        },
+      });
+
+      // Then, update the users table and user profile
+      await tx.users.update({
+        where: { id: isExistUser.id },
+        data: { email: body.email || isExistUser.email },
+      });
+
+      if (body.bio || body.profession || body.address) {
+        await tx.userProfile.update({
+          where: { id: isExistUser.id },
+          data: {
+            bio: body.bio,
+            profession: body.profession,
+            address: body.address,
+          },
+        });
+      }
+    } else if (isExistUser.role === "SUPER_ADMIN") {
+      // Handle Super Admin updates if applicable
+    } else {
+      throw new AppError(httpStatus.BAD_REQUEST, "Invalid user role");
+    }
+
+    return updatedProfile;
   });
+
   return result;
 };
 

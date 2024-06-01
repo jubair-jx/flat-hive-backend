@@ -30,4 +30,9 @@ flatRoutes.delete(
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   flatControllers.deleteFlatFromDB
 );
+flatRoutes.get(
+  "/:id",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),
+  flatControllers.getByIdFromDB
+);
 export default flatRoutes;

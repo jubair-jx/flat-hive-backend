@@ -53,7 +53,7 @@ const getAllFlatFromDB = async (params: any, options: TpaginationItems) => {
   }
 
   const whereCondition: Prisma.FlatWhereInput =
-    andCondition.length > 0 ? { AND: andCondition } : {};
+    andCondition.length > 0 ? { AND: andCondition, availability: true } : {};
 
   const result = await prisma.flat.findMany({
     where: whereCondition,
@@ -139,10 +139,24 @@ const deleteFlatById = async (id: string) => {
   });
   return result;
 };
+const getByIdFromDB = async (id: string): Promise<Flat | null> => {
+  const result = await prisma.flat.findUniqueOrThrow({
+    where: {
+      id,
+      availability: true,
+    },
+    include: {
+      bookings: true,
+    },
+  });
+
+  return result;
+};
 export const flatServices = {
   createFlatIntoDB,
   getAllFlatFromDB,
   updateFlatIntoDB,
   getMyFlatPostFromDB,
   deleteFlatById,
+  getByIdFromDB,
 };

@@ -69,6 +69,16 @@ const deleteFlatFromDB = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await flatServices.getByIdFromDB(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Flat data fetch successfully",
+    data: result,
+  });
+});
 
 export const flatControllers = {
   createFlat,
@@ -76,4 +86,5 @@ export const flatControllers = {
   updateFlat,
   getMyCreatedFlat,
   deleteFlatFromDB,
+  getByIdFromDB,
 };
