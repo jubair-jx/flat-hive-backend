@@ -71,10 +71,25 @@ const updateNormalUserData = catchAsync(async (req, res, next) => {
   });
 });
 
+const getUserById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await userServices.getUserByIdFromDB(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User data has been retrievd successfully",
+
+    data: result,
+  });
+});
+
 export const userControllers = {
   createUser,
   createAdmin,
   getAllNormalUsers,
   getAllUsers,
+  getUserById,
   updateNormalUserData,
 };

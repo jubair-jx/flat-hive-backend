@@ -12,7 +12,7 @@ bookingRoutes.post(
 );
 bookingRoutes.get(
   "/booking-application",
-  auth(UserRole.ADMIN, UserRole.USER),
+  auth(UserRole.ADMIN, UserRole.USER, UserRole.SUPER_ADMIN),
   bookingsControlller.getAllFlats
 );
 bookingRoutes.get(
@@ -22,7 +22,7 @@ bookingRoutes.get(
 );
 bookingRoutes.put(
   "/:bookingId",
-  auth(UserRole.ADMIN, UserRole.USER),
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   bookingsControlller.UpdateFlatBookingStatus
 );
 

@@ -56,7 +56,13 @@ const bookingFlatIntoDB = async (body: any, userMail: any) => {
 };
 
 const getAllBookingFlatFromDB = async () => {
-  const result = await prisma.booking.findMany();
+  const result = await prisma.booking.findMany({
+    where: {},
+    include: {
+      flat: true,
+      user: true,
+    },
+  });
   return result;
 };
 

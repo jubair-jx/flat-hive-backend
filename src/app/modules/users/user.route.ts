@@ -22,6 +22,11 @@ userRoutes.get(
   userControllers.getAllUsers
 );
 userRoutes.get(
+  "/:id",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),
+  userControllers.getUserById
+);
+userRoutes.get(
   "/normal-user",
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   userControllers.getAllNormalUsers

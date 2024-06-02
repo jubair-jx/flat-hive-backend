@@ -17,6 +17,7 @@ const createFlatIntoDB = async (body: Flat) => {
 };
 const getAllFlatFromDB = async (params: any, options: TpaginationItems) => {
   const { searchTerm, availability, ...filterData } = params;
+
   const { limit, sortBy, sortOrder, skip, page } =
     helperFunction.calculatePaginationFiltering(options);
 

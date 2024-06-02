@@ -209,10 +209,24 @@ const updateNormaUserInfoDataById = async (
   });
   return result;
 };
+
+const getUserByIdFromDB = async (id: string) => {
+  const getUser = await prisma.users.findUniqueOrThrow({
+    where: {
+      id,
+    },
+    include: {
+      normalUser: true,
+      admin: true,
+    },
+  });
+  return getUser;
+};
 export const userServices = {
   createUserIntoDB,
   createAdminIntoDB,
   getAllUserFromDB,
   getAllNormalUsersFromDB,
   updateNormaUserInfoDataById,
+  getUserByIdFromDB,
 };
