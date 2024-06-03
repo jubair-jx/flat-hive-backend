@@ -16,8 +16,10 @@ userRoutes.post(
   validateRequest(userValidationSchemas.createAdmin),
   userControllers.createAdmin
 );
+
+//Modifed the get all user endpoint
 userRoutes.get(
-  "/",
+  "/get-all-users",
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   userControllers.getAllUsers
 );
@@ -26,12 +28,13 @@ userRoutes.get(
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),
   userControllers.getUserById
 );
-userRoutes.get(
-  "/normal-user",
-  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
-  userControllers.getAllNormalUsers
-);
 
+//get all normal user api, modified api route
+userRoutes.get(
+  "/",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  userControllers.getNormalUsers
+);
 userRoutes.put(
   "/normal-user-info/:id",
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),

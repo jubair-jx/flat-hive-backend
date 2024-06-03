@@ -163,14 +163,13 @@ const getAllUserFromDB = async (params: any, options: TpaginationItems) => {
 };
 
 const getAllNormalUsersFromDB = async () => {
-  console.log("ss");
-  // const result = await prisma.normalUser.findMany({
-  //   include: {
-  //     user: true,
-  //   },
-  // });
-  // console.log(result);
-  // return result;
+  const result = await prisma.normalUser.findMany({
+    include: {
+      user: true,
+    },
+  });
+
+  return result;
 };
 const updateNormaUserInfoDataById = async (
   id: string,
