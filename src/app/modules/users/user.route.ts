@@ -31,6 +31,7 @@ userRoutes.get(
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   userControllers.getAllNormalUsers
 );
+
 userRoutes.put(
   "/normal-user-info/:id",
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),

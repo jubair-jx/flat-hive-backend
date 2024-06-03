@@ -43,9 +43,6 @@ const getAllUsers = catchAsync(async (req, res) => {
   });
 });
 const getAllNormalUsers = catchAsync(async (req, res) => {
-  // const filters = pickFilterData(req.query, userFilterAbleField);
-  // const options = pickFilterData(req.query, paginationFilteringfield);
-
   const result = await userServices.getAllNormalUsersFromDB();
 
   sendResponse(res, {
