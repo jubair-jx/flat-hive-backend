@@ -4,13 +4,21 @@ export const paginationFilteringfield = [
   "sortBy",
   "sortOrder",
 ];
-export const flatSearchAbleFields: string[] = [
-  "location",
-  "description",
-  "rent",
-  "totalBedrooms",
-  "utilitiesDescription",
-];
+export const flatSearchAbleFields = {
+  stringFields: [
+    "location",
+    "description",
+    "utilitiesDescription",
+    "amenities",
+  ],
+  numericFields: [
+    "rent",
+    "squareFeet",
+    "totalBedrooms",
+    "totalRooms",
+    "advanceAmount",
+  ],
+};
 export const flatFilterAbleFields: string[] = [
   "availability",
   "searchTerm",

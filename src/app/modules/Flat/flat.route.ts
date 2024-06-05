@@ -32,7 +32,7 @@ flatRoutes.delete(
 );
 flatRoutes.get(
   "/:id",
-  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),
+  // auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),
   flatControllers.getByIdFromDB
 );
 export default flatRoutes;

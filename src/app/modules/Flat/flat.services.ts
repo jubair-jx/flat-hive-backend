@@ -22,39 +22,55 @@ const getAllFlatFromDB = async (params: any, options: TpaginationItems) => {
     helperFunction.calculatePaginationFiltering(options);
 
   const andCondition: Prisma.FlatWhereInput[] = [];
-  //This condition for only search any items
-  if (params?.searchTerm) {
+
+  const isNumeric = !isNaN(Number(searchTerm));
+  if (isNumeric) {
+    const numericSearchTerm = Number(searchTerm);
     andCondition.push({
-      OR: flatSearchAbleFields.map((field) => ({
+      OR: flatSearchAbleFields.numericFields.map((field) => ({
+        [field]: numericSearchTerm,
+      })),
+    });
+  } else if (searchTerm) {
+    andCondition.push({
+      OR: flatSearchAbleFields.stringFields.map((field) => ({
         [field]: {
-          contains: params.searchTerm,
+          contains: searchTerm,
           mode: "insensitive",
         },
       })),
     });
   }
+
   // Condition for other filters
   if (availability !== undefined) {
     const availabilityBool = availability.toLowerCase() === "true";
-
     andCondition.push({
       availability: availabilityBool,
     });
   }
 
-  //This condition for specific field, for example location, description, utilitiesDescription, etc
+  // This condition for specific fields, for example location, description, utilitiesDescription, etc.
   if (Object.keys(filterData).length > 0) {
-    andCondition.push({
-      AND: Object.keys(filterData).map((key) => ({
-        [key]: {
-          equals: (filterData as any)[key],
-        },
-      })),
+    Object.entries(filterData).forEach(([key, value]) => {
+      if (flatSearchAbleFields.numericFields.includes(key)) {
+        // Handle numeric fields
+        const numericValue = Number(value);
+        if (!isNaN(numericValue)) {
+          andCondition.push({ [key]: numericValue });
+        }
+      } else if (flatSearchAbleFields.stringFields.includes(key)) {
+        // Handle string fields
+        andCondition.push({ [key]: { contains: value, mode: "insensitive" } });
+      } else {
+        // Default equals condition for other fields
+        andCondition.push({ [key]: { equals: value } });
+      }
     });
   }
 
   const whereCondition: Prisma.FlatWhereInput =
-    andCondition.length > 0 ? { AND: andCondition, availability: true } : {};
+    andCondition.length > 0 ? { AND: andCondition } : {};
 
   const result = await prisma.flat.findMany({
     where: whereCondition,
@@ -79,7 +95,6 @@ const getAllFlatFromDB = async (params: any, options: TpaginationItems) => {
       limit,
       totalCount,
     },
-
     data: result,
   };
 };
