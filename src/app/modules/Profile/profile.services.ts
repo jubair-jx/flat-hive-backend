@@ -76,6 +76,7 @@ const updateUserProfileIntoDB = async (userData: TAuthUser, body: any) => {
         where: { email: isExistUser.email },
         data: {
           username: body.username,
+          name: body?.name,
           email: body.email || isExistUser.email,
           profilePhoto: body.profilePhoto,
           contactNumber: body.contactNumber,
@@ -104,6 +105,7 @@ const updateUserProfileIntoDB = async (userData: TAuthUser, body: any) => {
         where: { email: isExistUser.email },
         data: {
           username: body.username,
+          name: body?.name,
           email: body.email || isExistUser.email,
           profilePhoto: body.profilePhoto,
           contactNumber: body.contactNumber,

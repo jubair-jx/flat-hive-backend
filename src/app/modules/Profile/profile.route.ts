@@ -12,7 +12,7 @@ profileRoutes.get(
 );
 profileRoutes.put(
   "/update-info",
-  auth(UserRole.ADMIN, UserRole.ADMIN, UserRole.USER),
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.USER),
   profileControllers.updateUserProfile
 );
 profileRoutes.get(
