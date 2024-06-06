@@ -129,7 +129,33 @@ const updateUserProfileIntoDB = async (userData: TAuthUser, body: any) => {
         });
       }
     } else if (isExistUser.role === "SUPER_ADMIN") {
-      // Handle Super Admin updates if applicable
+      updatedProfile = await tx.admin.update({
+        where: { email: isExistUser.email },
+        data: {
+          username: body.username,
+          name: body?.name,
+          email: body.email || isExistUser.email,
+          profilePhoto: body.profilePhoto,
+          contactNumber: body.contactNumber,
+        },
+      });
+
+      // Then, update the users table and user profile
+      await tx.users.update({
+        where: { id: isExistUser.id },
+        data: { email: body.email || isExistUser.email },
+      });
+
+      if (body.bio || body.profession || body.address) {
+        await tx.userProfile.update({
+          where: { id: isExistUser.id },
+          data: {
+            bio: body.bio,
+            profession: body.profession,
+            address: body.address,
+          },
+        });
+      }
     } else {
       throw new AppError(httpStatus.BAD_REQUEST, "Invalid user role");
     }
