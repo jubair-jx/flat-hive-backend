@@ -108,6 +108,19 @@ const getAllAdminFromDB = catchAsync(async (req, res) => {
   });
 });
 
+const updateAdminData = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const result = await userServices.updateAdminInfoDataById(id, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Admin data Info has been updated successfully",
+    data: result,
+  });
+});
+
 export const userControllers = {
   createUser,
   createAdmin,
@@ -116,5 +129,6 @@ export const userControllers = {
   getUserById,
   getNormalUsers,
   updateNormalUserData,
+  updateAdminData,
   getAllAdminFromDB,
 };

@@ -10,4 +10,10 @@ adminRoutes.get(
   auth(UserRole.SUPER_ADMIN),
   userControllers.getAllAdminFromDB
 );
+
+adminRoutes.put(
+  "/admin-info/:id",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  userControllers.updateAdminData
+);
 export default adminRoutes;
