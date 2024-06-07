@@ -94,6 +94,20 @@ const getNormalUsers = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+const getAllAdminFromDB = catchAsync(async (req, res) => {
+  const result = await userServices.getAllAdminFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Admin data has been retrievd successfully",
+    // meta: result.meta,
+    // data: result.data,
+    data: result,
+  });
+});
+
 export const userControllers = {
   createUser,
   createAdmin,
@@ -102,4 +116,5 @@ export const userControllers = {
   getUserById,
   getNormalUsers,
   updateNormalUserData,
+  getAllAdminFromDB,
 };

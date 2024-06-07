@@ -223,11 +223,29 @@ const getUserByIdFromDB = async (id: string) => {
   });
   return getUser;
 };
+
+const getAllAdminFromDB = async () => {
+  const result = await prisma.admin.findMany({
+    where: {
+      isDeleted: false,
+      user: {
+        role: UserRole?.ADMIN,
+      },
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  return result;
+};
+
 export const userServices = {
   createUserIntoDB,
   createAdminIntoDB,
   getAllUserFromDB,
   getAllNormalUsersFromDB,
   updateNormaUserInfoDataById,
+  getAllAdminFromDB,
   getUserByIdFromDB,
 };

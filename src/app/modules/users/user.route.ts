@@ -13,6 +13,7 @@ userRoutes.post(
 );
 userRoutes.post(
   "/create-admin",
+  auth(UserRole.SUPER_ADMIN),
   validateRequest(userValidationSchemas.createAdmin),
   userControllers.createAdmin
 );
