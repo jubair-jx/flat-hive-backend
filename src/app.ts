@@ -4,30 +4,35 @@ import express, { Application, Request, Response } from "express";
 import globalErrorHandelar from "./app/middlewares/globalError";
 import notFoundRoute from "./app/middlewares/notFound";
 import router from "./routes/routes";
+
 const app: Application = express();
-//cors for browser support
+
+// CORS configuration
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://flat-hive-app.vercel.app/"],
+    origin: ["https://flat-hive-app.vercel.app", "http://localhost:3000"],
     credentials: true,
   })
 );
+
 app.use(cookieParser());
-//parser
+
+// Parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//root routes
+// Root route
 app.get("/", (req: Request, res: Response) => {
   res.send({ message: "Flat Sharing Server is running now" });
 });
 
-//main api endpoint
+// Main API endpoint
 app.use("/api", router);
 
-// global error handler
+// Global error handler
 app.use(globalErrorHandelar);
-//not found routes
+
+// Not found routes
 app.use(notFoundRoute);
 
 export default app;
